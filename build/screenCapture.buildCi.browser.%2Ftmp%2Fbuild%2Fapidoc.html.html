@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="http://github.com/soldair/node-walkdir"
-
-    >walkdir (v0.0.11)</a>
+    <a href="http://github.com/soldair/node-walkdir">walkdir (v0.0.11)</a>
 </h1>
 <h4>Find files simply. Walks a directory tree emitting events based on what it finds. Presents a familiar callback/emitter/a+sync interface. Walk a tree of any depth.</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.walkdir">module walkdir</a><ol>
 
@@ -145,7 +138,7 @@
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function walkdir(path, options, cb){
 
-  if(typeof options == &#x27;function&#x27;) cb = options;
+  if(typeof options == 'function') cb = options;
 
   options = options || {};
 
@@ -162,13 +155,13 @@
   jobs=0,
   job = function(value) {
     jobs += value;
-    if(value &#x3c; 1 &#x26;&#x26; !tick) {
+    if(value &lt; 1 &amp;&amp; !tick) {
       tick = 1;
       process.nextTick(function(){
         tick = 0;
-        if(jobs &#x3c;= 0 &#x26;&#x26; !ended) {
+        if(jobs &lt;= 0 &amp;&amp; !ended) {
           ended = 1;
-          emitter.emit(&#x27;end&#x27;);
+          emitter.emit('end');
         }
       });
     }
@@ -181,8 +174,8 @@
   }
 
   //mapping is stat functions to event names.	
-  var statIs = [[&#x27;isFile&#x27;,&#x27;file&#x27;],[&#x27;isDirectory&#x27;,&#x27;directory&#x27;],[&#x27;isSymbolicLink&#x27;,&#x27;link&#x27;],[&#x27;isSocket&#x27;,&#x27;socket&#x27;],[&#x27;isFIFO&#x27;,&#x27;fifo&#x27;],[&#x27;
-isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x27;characterdevice&#x27;]];
+  var statIs = [['isFile','file'],['isDirectory','directory'],['isSymbolicLink','link'],['isSocket','socket'],['isFIFO','fifo'],['
+isBlockDevice','blockdevice'],['isCharacterDevice','characterdevice']];
 
   var statter = function (path,first,depth) {
     job(1);
@@ -196,27 +189,27 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       // after a readdir on /proc/3321/task/3321/ for example. Where 3321 is this pid
       // node @ v0.6.10
       if(err || !stat) {
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
 
       //if i have evented this inode already dont again.
       var fileName = _path.basename(path);
-      var fileKey = stat.dev + &#x27;-&#x27; + stat.ino + &#x27;-&#x27; + fileName;
-      if(inos[fileKey] &#x26;&#x26; stat.ino) return;
+      var fileKey = stat.dev + '-' + stat.ino + '-' + fileName;
+      if(inos[fileKey] &amp;&amp; stat.ino) return;
       inos[fileKey] = 1;
 
-      if (first &#x26;&#x26; stat.isDirectory()) {
-        emitter.emit(&#x27;targetdirectory&#x27;,path,stat,depth);
+      if (first &amp;&amp; stat.isDirectory()) {
+        emitter.emit('targetdirectory',path,stat,depth);
         return;
       }
 
-      emitter.emit(&#x27;path&#x27;, path, stat,depth);
+      emitter.emit('path', path, stat,depth);
 
       var i,name;
 
-      for(var j=0,k=statIs.length;j&#x3c;k;j++) {
+      for(var j=0,k=statIs.length;j&lt;k;j++) {
         if(stat[statIs[j][0]]()) {
           emitter.emit(statIs[j][1],path,stat,depth);
           break;
@@ -242,13 +235,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       resolved = 1;
     }
 
-    if(options.max_depth &#x26;&#x26; depth &#x3e;= options.max_depth){
-      emitter.emit(&#x27;maxdepth&#x27;,path,stat,depth);
+    if(options.max_depth &amp;&amp; depth &gt;= options.max_depth){
+      emitter.emit('maxdepth',path,stat,depth);
       return;
     }
 
     if(dontTraverse.length){
-      for(var i=0;i&#x3c;dontTraverse.length;++i){
+      for(var i=0;i&lt;dontTraverse.length;++i){
         if(dontTraverse[i] == path) {
           dontTraverse.splice(i,1)
           return;
@@ -261,18 +254,18 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       job(-1);
       if (err || !files) {
         //permissions error or invalid files
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
       if(!files.length) {
         // empty directory event.
-        emitter.emit(&#x27;empty&#x27;,path,stat,depth);
+        emitter.emit('empty',path,stat,depth);
         return;
       }
 
-      if(path == sep) path=&#x27;&#x27;;
-      for(var i=0,j=files.length;i&#x3c;j;i++){
+      if(path == sep) path='';
+      for(var i=0,j=files.length;i&lt;j;i++){
         statter(path+sep+files[i],false,(depth||0)+1);
       }
 
@@ -299,7 +292,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       statter(path,false,depth);
     };
 
-    emitter.on(&#x27;link&#x27;,function(path,stat,depth){
+    emitter.on('link',function(path,stat,depth){
       job(1);
       if(options.sync) {
         var lpath,ex;
@@ -327,7 +320,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function walkdir(path, options, cb){
 
-  if(typeof options == &#x27;function&#x27;) cb = options;
+  if(typeof options == 'function') cb = options;
 
   options = options || {};
 
@@ -344,13 +337,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
   jobs=0,
   job = function(value) {
     jobs += value;
-    if(value &#x3c; 1 &#x26;&#x26; !tick) {
+    if(value &lt; 1 &amp;&amp; !tick) {
       tick = 1;
       process.nextTick(function(){
         tick = 0;
-        if(jobs &#x3c;= 0 &#x26;&#x26; !ended) {
+        if(jobs &lt;= 0 &amp;&amp; !ended) {
           ended = 1;
-          emitter.emit(&#x27;end&#x27;);
+          emitter.emit('end');
         }
       });
     }
@@ -363,8 +356,8 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
   }
 
   //mapping is stat functions to event names.	
-  var statIs = [[&#x27;isFile&#x27;,&#x27;file&#x27;],[&#x27;isDirectory&#x27;,&#x27;directory&#x27;],[&#x27;isSymbolicLink&#x27;,&#x27;link&#x27;],[&#x27;isSocket&#x27;,&#x27;socket&#x27;],[&#x27;isFIFO&#x27;,&#x27;fifo&#x27;],[&#x27;
-isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x27;characterdevice&#x27;]];
+  var statIs = [['isFile','file'],['isDirectory','directory'],['isSymbolicLink','link'],['isSocket','socket'],['isFIFO','fifo'],['
+isBlockDevice','blockdevice'],['isCharacterDevice','characterdevice']];
 
   var statter = function (path,first,depth) {
     job(1);
@@ -378,27 +371,27 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       // after a readdir on /proc/3321/task/3321/ for example. Where 3321 is this pid
       // node @ v0.6.10
       if(err || !stat) {
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
 
       //if i have evented this inode already dont again.
       var fileName = _path.basename(path);
-      var fileKey = stat.dev + &#x27;-&#x27; + stat.ino + &#x27;-&#x27; + fileName;
-      if(inos[fileKey] &#x26;&#x26; stat.ino) return;
+      var fileKey = stat.dev + '-' + stat.ino + '-' + fileName;
+      if(inos[fileKey] &amp;&amp; stat.ino) return;
       inos[fileKey] = 1;
 
-      if (first &#x26;&#x26; stat.isDirectory()) {
-        emitter.emit(&#x27;targetdirectory&#x27;,path,stat,depth);
+      if (first &amp;&amp; stat.isDirectory()) {
+        emitter.emit('targetdirectory',path,stat,depth);
         return;
       }
 
-      emitter.emit(&#x27;path&#x27;, path, stat,depth);
+      emitter.emit('path', path, stat,depth);
 
       var i,name;
 
-      for(var j=0,k=statIs.length;j&#x3c;k;j++) {
+      for(var j=0,k=statIs.length;j&lt;k;j++) {
         if(stat[statIs[j][0]]()) {
           emitter.emit(statIs[j][1],path,stat,depth);
           break;
@@ -424,13 +417,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       resolved = 1;
     }
 
-    if(options.max_depth &#x26;&#x26; depth &#x3e;= options.max_depth){
-      emitter.emit(&#x27;maxdepth&#x27;,path,stat,depth);
+    if(options.max_depth &amp;&amp; depth &gt;= options.max_depth){
+      emitter.emit('maxdepth',path,stat,depth);
       return;
     }
 
     if(dontTraverse.length){
-      for(var i=0;i&#x3c;dontTraverse.length;++i){
+      for(var i=0;i&lt;dontTraverse.length;++i){
         if(dontTraverse[i] == path) {
           dontTraverse.splice(i,1)
           return;
@@ -443,18 +436,18 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       job(-1);
       if (err || !files) {
         //permissions error or invalid files
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
       if(!files.length) {
         // empty directory event.
-        emitter.emit(&#x27;empty&#x27;,path,stat,depth);
+        emitter.emit('empty',path,stat,depth);
         return;
       }
 
-      if(path == sep) path=&#x27;&#x27;;
-      for(var i=0,j=files.length;i&#x3c;j;i++){
+      if(path == sep) path='';
+      for(var i=0,j=files.length;i&lt;j;i++){
         statter(path+sep+files[i],false,(depth||0)+1);
       }
 
@@ -481,7 +474,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       statter(path,false,depth);
     };
 
-    emitter.on(&#x27;link&#x27;,function(path,stat,depth){
+    emitter.on('link',function(path,stat,depth){
       job(1);
       if(options.sync) {
         var lpath,ex;
@@ -508,28 +501,28 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">sync = function (path, options, cb){
-  if(typeof options == &#x27;function&#x27;) cb = options;
+  if(typeof options == 'function') cb = options;
   options = options || {};
   options.sync = true;
   return walkdir(path,options,cb);
 
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-emitter.on(&#x27;file&#x27;,function(filename,stat){
-  console.log(&#x27;file from emitter: &#x27;, filename);
+emitter.on('file',function(filename,stat){
+  console.log('file from emitter: ', filename);
 });
 
 
 //sync with callback
 
-walk.<span class="apidocCodeKeywordSpan">sync</span>(&#x27;../&#x27;,function(path,stat){
-  console.log(&#x27;found sync:&#x27;,path);
+walk.<span class="apidocCodeKeywordSpan">sync</span>('../',function(path,stat){
+  console.log('found sync:',path);
 });
 
 //sync just need paths
 
-var paths = walk.sync(&#x27;../&#x27;);
-console.log(&#x27;found paths sync: &#x27;,paths);
+var paths = walk.sync('../');
+console.log('found paths sync: ',paths);
 ...</pre></li>
     </ul>
 
@@ -544,7 +537,7 @@ console.log(&#x27;found paths sync: &#x27;,paths);
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function walkdir(path, options, cb){
 
-  if(typeof options == &#x27;function&#x27;) cb = options;
+  if(typeof options == 'function') cb = options;
 
   options = options || {};
 
@@ -561,13 +554,13 @@ console.log(&#x27;found paths sync: &#x27;,paths);
   jobs=0,
   job = function(value) {
     jobs += value;
-    if(value &#x3c; 1 &#x26;&#x26; !tick) {
+    if(value &lt; 1 &amp;&amp; !tick) {
       tick = 1;
       process.nextTick(function(){
         tick = 0;
-        if(jobs &#x3c;= 0 &#x26;&#x26; !ended) {
+        if(jobs &lt;= 0 &amp;&amp; !ended) {
           ended = 1;
-          emitter.emit(&#x27;end&#x27;);
+          emitter.emit('end');
         }
       });
     }
@@ -580,8 +573,8 @@ console.log(&#x27;found paths sync: &#x27;,paths);
   }
 
   //mapping is stat functions to event names.	
-  var statIs = [[&#x27;isFile&#x27;,&#x27;file&#x27;],[&#x27;isDirectory&#x27;,&#x27;directory&#x27;],[&#x27;isSymbolicLink&#x27;,&#x27;link&#x27;],[&#x27;isSocket&#x27;,&#x27;socket&#x27;],[&#x27;isFIFO&#x27;,&#x27;fifo&#x27;],[&#x27;
-isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x27;characterdevice&#x27;]];
+  var statIs = [['isFile','file'],['isDirectory','directory'],['isSymbolicLink','link'],['isSocket','socket'],['isFIFO','fifo'],['
+isBlockDevice','blockdevice'],['isCharacterDevice','characterdevice']];
 
   var statter = function (path,first,depth) {
     job(1);
@@ -595,27 +588,27 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       // after a readdir on /proc/3321/task/3321/ for example. Where 3321 is this pid
       // node @ v0.6.10
       if(err || !stat) {
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
 
       //if i have evented this inode already dont again.
       var fileName = _path.basename(path);
-      var fileKey = stat.dev + &#x27;-&#x27; + stat.ino + &#x27;-&#x27; + fileName;
-      if(inos[fileKey] &#x26;&#x26; stat.ino) return;
+      var fileKey = stat.dev + '-' + stat.ino + '-' + fileName;
+      if(inos[fileKey] &amp;&amp; stat.ino) return;
       inos[fileKey] = 1;
 
-      if (first &#x26;&#x26; stat.isDirectory()) {
-        emitter.emit(&#x27;targetdirectory&#x27;,path,stat,depth);
+      if (first &amp;&amp; stat.isDirectory()) {
+        emitter.emit('targetdirectory',path,stat,depth);
         return;
       }
 
-      emitter.emit(&#x27;path&#x27;, path, stat,depth);
+      emitter.emit('path', path, stat,depth);
 
       var i,name;
 
-      for(var j=0,k=statIs.length;j&#x3c;k;j++) {
+      for(var j=0,k=statIs.length;j&lt;k;j++) {
         if(stat[statIs[j][0]]()) {
           emitter.emit(statIs[j][1],path,stat,depth);
           break;
@@ -641,13 +634,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       resolved = 1;
     }
 
-    if(options.max_depth &#x26;&#x26; depth &#x3e;= options.max_depth){
-      emitter.emit(&#x27;maxdepth&#x27;,path,stat,depth);
+    if(options.max_depth &amp;&amp; depth &gt;= options.max_depth){
+      emitter.emit('maxdepth',path,stat,depth);
       return;
     }
 
     if(dontTraverse.length){
-      for(var i=0;i&#x3c;dontTraverse.length;++i){
+      for(var i=0;i&lt;dontTraverse.length;++i){
         if(dontTraverse[i] == path) {
           dontTraverse.splice(i,1)
           return;
@@ -660,18 +653,18 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       job(-1);
       if (err || !files) {
         //permissions error or invalid files
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
       if(!files.length) {
         // empty directory event.
-        emitter.emit(&#x27;empty&#x27;,path,stat,depth);
+        emitter.emit('empty',path,stat,depth);
         return;
       }
 
-      if(path == sep) path=&#x27;&#x27;;
-      for(var i=0,j=files.length;i&#x3c;j;i++){
+      if(path == sep) path='';
+      for(var i=0,j=files.length;i&lt;j;i++){
         statter(path+sep+files[i],false,(depth||0)+1);
       }
 
@@ -698,7 +691,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       statter(path,false,depth);
     };
 
-    emitter.on(&#x27;link&#x27;,function(path,stat,depth){
+    emitter.on('link',function(path,stat,depth){
       job(1);
       if(options.sync) {
         var lpath,ex;
@@ -731,7 +724,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function walkdir(path, options, cb){
 
-  if(typeof options == &#x27;function&#x27;) cb = options;
+  if(typeof options == 'function') cb = options;
 
   options = options || {};
 
@@ -748,13 +741,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
   jobs=0,
   job = function(value) {
     jobs += value;
-    if(value &#x3c; 1 &#x26;&#x26; !tick) {
+    if(value &lt; 1 &amp;&amp; !tick) {
       tick = 1;
       process.nextTick(function(){
         tick = 0;
-        if(jobs &#x3c;= 0 &#x26;&#x26; !ended) {
+        if(jobs &lt;= 0 &amp;&amp; !ended) {
           ended = 1;
-          emitter.emit(&#x27;end&#x27;);
+          emitter.emit('end');
         }
       });
     }
@@ -767,8 +760,8 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
   }
 
   //mapping is stat functions to event names.	
-  var statIs = [[&#x27;isFile&#x27;,&#x27;file&#x27;],[&#x27;isDirectory&#x27;,&#x27;directory&#x27;],[&#x27;isSymbolicLink&#x27;,&#x27;link&#x27;],[&#x27;isSocket&#x27;,&#x27;socket&#x27;],[&#x27;isFIFO&#x27;,&#x27;fifo&#x27;],[&#x27;
-isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x27;characterdevice&#x27;]];
+  var statIs = [['isFile','file'],['isDirectory','directory'],['isSymbolicLink','link'],['isSocket','socket'],['isFIFO','fifo'],['
+isBlockDevice','blockdevice'],['isCharacterDevice','characterdevice']];
 
   var statter = function (path,first,depth) {
     job(1);
@@ -782,27 +775,27 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       // after a readdir on /proc/3321/task/3321/ for example. Where 3321 is this pid
       // node @ v0.6.10
       if(err || !stat) {
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
 
       //if i have evented this inode already dont again.
       var fileName = _path.basename(path);
-      var fileKey = stat.dev + &#x27;-&#x27; + stat.ino + &#x27;-&#x27; + fileName;
-      if(inos[fileKey] &#x26;&#x26; stat.ino) return;
+      var fileKey = stat.dev + '-' + stat.ino + '-' + fileName;
+      if(inos[fileKey] &amp;&amp; stat.ino) return;
       inos[fileKey] = 1;
 
-      if (first &#x26;&#x26; stat.isDirectory()) {
-        emitter.emit(&#x27;targetdirectory&#x27;,path,stat,depth);
+      if (first &amp;&amp; stat.isDirectory()) {
+        emitter.emit('targetdirectory',path,stat,depth);
         return;
       }
 
-      emitter.emit(&#x27;path&#x27;, path, stat,depth);
+      emitter.emit('path', path, stat,depth);
 
       var i,name;
 
-      for(var j=0,k=statIs.length;j&#x3c;k;j++) {
+      for(var j=0,k=statIs.length;j&lt;k;j++) {
         if(stat[statIs[j][0]]()) {
           emitter.emit(statIs[j][1],path,stat,depth);
           break;
@@ -828,13 +821,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       resolved = 1;
     }
 
-    if(options.max_depth &#x26;&#x26; depth &#x3e;= options.max_depth){
-      emitter.emit(&#x27;maxdepth&#x27;,path,stat,depth);
+    if(options.max_depth &amp;&amp; depth &gt;= options.max_depth){
+      emitter.emit('maxdepth',path,stat,depth);
       return;
     }
 
     if(dontTraverse.length){
-      for(var i=0;i&#x3c;dontTraverse.length;++i){
+      for(var i=0;i&lt;dontTraverse.length;++i){
         if(dontTraverse[i] == path) {
           dontTraverse.splice(i,1)
           return;
@@ -847,18 +840,18 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       job(-1);
       if (err || !files) {
         //permissions error or invalid files
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
       if(!files.length) {
         // empty directory event.
-        emitter.emit(&#x27;empty&#x27;,path,stat,depth);
+        emitter.emit('empty',path,stat,depth);
         return;
       }
 
-      if(path == sep) path=&#x27;&#x27;;
-      for(var i=0,j=files.length;i&#x3c;j;i++){
+      if(path == sep) path='';
+      for(var i=0,j=files.length;i&lt;j;i++){
         statter(path+sep+files[i],false,(depth||0)+1);
       }
 
@@ -885,7 +878,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       statter(path,false,depth);
     };
 
-    emitter.on(&#x27;link&#x27;,function(path,stat,depth){
+    emitter.on('link',function(path,stat,depth){
       job(1);
       if(options.sync) {
         var lpath,ex;
@@ -913,7 +906,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function walkdir(path, options, cb){
 
-  if(typeof options == &#x27;function&#x27;) cb = options;
+  if(typeof options == 'function') cb = options;
 
   options = options || {};
 
@@ -930,13 +923,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
   jobs=0,
   job = function(value) {
     jobs += value;
-    if(value &#x3c; 1 &#x26;&#x26; !tick) {
+    if(value &lt; 1 &amp;&amp; !tick) {
       tick = 1;
       process.nextTick(function(){
         tick = 0;
-        if(jobs &#x3c;= 0 &#x26;&#x26; !ended) {
+        if(jobs &lt;= 0 &amp;&amp; !ended) {
           ended = 1;
-          emitter.emit(&#x27;end&#x27;);
+          emitter.emit('end');
         }
       });
     }
@@ -949,8 +942,8 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
   }
 
   //mapping is stat functions to event names.	
-  var statIs = [[&#x27;isFile&#x27;,&#x27;file&#x27;],[&#x27;isDirectory&#x27;,&#x27;directory&#x27;],[&#x27;isSymbolicLink&#x27;,&#x27;link&#x27;],[&#x27;isSocket&#x27;,&#x27;socket&#x27;],[&#x27;isFIFO&#x27;,&#x27;fifo&#x27;],[&#x27;
-isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x27;characterdevice&#x27;]];
+  var statIs = [['isFile','file'],['isDirectory','directory'],['isSymbolicLink','link'],['isSocket','socket'],['isFIFO','fifo'],['
+isBlockDevice','blockdevice'],['isCharacterDevice','characterdevice']];
 
   var statter = function (path,first,depth) {
     job(1);
@@ -964,27 +957,27 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       // after a readdir on /proc/3321/task/3321/ for example. Where 3321 is this pid
       // node @ v0.6.10
       if(err || !stat) {
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
 
       //if i have evented this inode already dont again.
       var fileName = _path.basename(path);
-      var fileKey = stat.dev + &#x27;-&#x27; + stat.ino + &#x27;-&#x27; + fileName;
-      if(inos[fileKey] &#x26;&#x26; stat.ino) return;
+      var fileKey = stat.dev + '-' + stat.ino + '-' + fileName;
+      if(inos[fileKey] &amp;&amp; stat.ino) return;
       inos[fileKey] = 1;
 
-      if (first &#x26;&#x26; stat.isDirectory()) {
-        emitter.emit(&#x27;targetdirectory&#x27;,path,stat,depth);
+      if (first &amp;&amp; stat.isDirectory()) {
+        emitter.emit('targetdirectory',path,stat,depth);
         return;
       }
 
-      emitter.emit(&#x27;path&#x27;, path, stat,depth);
+      emitter.emit('path', path, stat,depth);
 
       var i,name;
 
-      for(var j=0,k=statIs.length;j&#x3c;k;j++) {
+      for(var j=0,k=statIs.length;j&lt;k;j++) {
         if(stat[statIs[j][0]]()) {
           emitter.emit(statIs[j][1],path,stat,depth);
           break;
@@ -1010,13 +1003,13 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       resolved = 1;
     }
 
-    if(options.max_depth &#x26;&#x26; depth &#x3e;= options.max_depth){
-      emitter.emit(&#x27;maxdepth&#x27;,path,stat,depth);
+    if(options.max_depth &amp;&amp; depth &gt;= options.max_depth){
+      emitter.emit('maxdepth',path,stat,depth);
       return;
     }
 
     if(dontTraverse.length){
-      for(var i=0;i&#x3c;dontTraverse.length;++i){
+      for(var i=0;i&lt;dontTraverse.length;++i){
         if(dontTraverse[i] == path) {
           dontTraverse.splice(i,1)
           return;
@@ -1029,18 +1022,18 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       job(-1);
       if (err || !files) {
         //permissions error or invalid files
-        emitter.emit(&#x27;fail&#x27;,path,err);
+        emitter.emit('fail',path,err);
         return;
       }
 
       if(!files.length) {
         // empty directory event.
-        emitter.emit(&#x27;empty&#x27;,path,stat,depth);
+        emitter.emit('empty',path,stat,depth);
         return;
       }
 
-      if(path == sep) path=&#x27;&#x27;;
-      for(var i=0,j=files.length;i&#x3c;j;i++){
+      if(path == sep) path='';
+      for(var i=0,j=files.length;i&lt;j;i++){
         statter(path+sep+files[i],false,(depth||0)+1);
       }
 
@@ -1067,7 +1060,7 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
       statter(path,false,depth);
     };
 
-    emitter.on(&#x27;link&#x27;,function(path,stat,depth){
+    emitter.on('link',function(path,stat,depth){
       job(1);
       if(options.sync) {
         var lpath,ex;
@@ -1094,28 +1087,28 @@ isBlockDevice&#x27;,&#x27;blockdevice&#x27;],[&#x27;isCharacterDevice&#x27;,&#x2
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">sync = function (path, options, cb){
-  if(typeof options == &#x27;function&#x27;) cb = options;
+  if(typeof options == 'function') cb = options;
   options = options || {};
   options.sync = true;
   return walkdir(path,options,cb);
 
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-emitter.on(&#x27;file&#x27;,function(filename,stat){
-  console.log(&#x27;file from emitter: &#x27;, filename);
+emitter.on('file',function(filename,stat){
+  console.log('file from emitter: ', filename);
 });
 
 
 //sync with callback
 
-walk.<span class="apidocCodeKeywordSpan">sync</span>(&#x27;../&#x27;,function(path,stat){
-  console.log(&#x27;found sync:&#x27;,path);
+walk.<span class="apidocCodeKeywordSpan">sync</span>('../',function(path,stat){
+  console.log('found sync:',path);
 });
 
 //sync just need paths
 
-var paths = walk.sync(&#x27;../&#x27;);
-console.log(&#x27;found paths sync: &#x27;,paths);
+var paths = walk.sync('../');
+console.log('found paths sync: ',paths);
 ...</pre></li>
     </ul>
 
@@ -1128,3 +1121,4 @@ console.log(&#x27;found paths sync: &#x27;,paths);
     ]
 </div>
 </div>
+</body></html>
